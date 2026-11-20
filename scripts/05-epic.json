@@ -1,0 +1,51 @@
+{
+  "version": "1.0.0",
+  "title": "Criar Épicos — {{PROJECT_NAME}}",
+  "description": "Gera os arquivos de épico de {{PROJECT_NAME}} a partir do TSD, subindo a cadeia de documentos (TSD → SDD → PRD → BRD) para ter contexto completo antes de decompor o escopo em unidades de trabalho priorizadas.",
+  "context": {
+    "objective": "Decompor o escopo em épicos priorizados, cada um pequeno o suficiente para ter foco claro e grande o suficiente para entregar valor perceptível.",
+    "background": "Um Épico é uma unidade de trabalho de alto nível com objetivo e critérios de aceite globais. Serve de índice para as tasks que o compõem. Não criar escopo fora do PRD. {{DEFINIR: particularidades do projeto, como fatias verticais ou fases}}",
+    "inputs": {
+      "docs_directory": "docs",
+      "docs_index": "docs/README.md",
+      "brd": "docs/01-BRD.md",
+      "prd": "docs/02-PRD.md",
+      "sdd": "docs/03-SDD.md",
+      "tsd": "docs/04-TSD.md",
+      "references": "docs/referencias",
+      "output_directory": "tasks/epics"
+    },
+    "id_conventions": {
+      "requisitos_negocio": "BR-xx (BRD)",
+      "requisitos_funcionais": "FR-xx (PRD)",
+      "regras_negocio": "RN-xx (PRD)",
+      "requisitos_nao_funcionais": "NFR-xx (PRD)",
+      "decisoes_arquiteturais": "ADR-xx (SDD)",
+      "questoes_abertas": "Q-xx (PRD)"
+    },
+    "formats": {
+      "epic_filename": "EPIC-NN-slug-em-kebab-case.md",
+      "epic_checklist_placeholder": "- [ ] a definir"
+    },
+    "clean_code_rule": {
+      "titulo": "Código limpo",
+      "regras": [
+        "{{DEFINIR: regras de qualidade de código do projeto}}",
+        "Sem código morto, sem gambiarra e sem estrutura reservada que nenhuma task use."
+      ]
+    }
+  },
+  "actions": [
+    "Pense passo a passo antes de criar qualquer épico.",
+    "Ler context.inputs.docs_index para entender a convenção de IDs e as decisões do projeto.",
+    "Ler integralmente o TSD e subir a cadeia lendo SDD, PRD e BRD.",
+    "Verificar se já existem épicos em context.inputs.output_directory. Se existirem, não sobrescrever: reportar os existentes e criar apenas os que faltam, continuando a numeração.",
+    "Antes de reutilizar um padrão dos documentos, verificar o código atual e decisões posteriores que o tenham substituído. Em conflito, a instrução atual do usuário tem precedência, depois o TSD, depois o SDD.",
+    "Garantir cobertura total: todo FR do PRD aparece em pelo menos um épico e os NFRs estão cobertos. Itens fora de escopo e questões em aberto não viram épico.",
+    "Para cada épico, redigir um documento com: Código e Título; Objetivo; Contexto e Motivação; Requisitos Envolvidos (IDs); Escopo técnico (seções do TSD e SDD); Critérios de Aceite Globais; Dependências; Checklist de tasks (context.formats.epic_checklist_placeholder); Status; Pontos em aberto.",
+    "Aplicar context.clean_code_rule nos Critérios de Aceite Globais.",
+    "Nomear cada arquivo conforme context.formats.epic_filename, com numeração sequencial, e salvar em context.inputs.output_directory.",
+    "Não escrever código nem alterar os documentos de docs/; lacunas ou inconsistências vão para a seção 'Pontos em aberto' do épico.",
+    "Retornar apenas: lista dos épicos criados com caminho, título e uma linha de resumo, mais qualquer FR não coberto (máximo 150 palavras)."
+  ]
+}

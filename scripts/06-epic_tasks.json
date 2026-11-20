@@ -1,0 +1,57 @@
+{
+  "version": "1.0.0",
+  "title": "Criar Tasks de um Épico — {{PROJECT_NAME}}",
+  "description": "Decompõe um épico de {{PROJECT_NAME}} em tasks atômicas, cria um arquivo .md por task com especificação completa baseada no TSD/SDD e atualiza o checklist do épico com links para cada task.",
+  "context": {
+    "objective": "Produzir tasks atômicas e detalhadas que um agente de desenvolvimento consiga implementar de forma isolada em uma única sessão, sem consultas extras.",
+    "background": "Uma task é a unidade mínima de desenvolvimento: implementável numa sessão e testável isoladamente, com critérios de aceite verificáveis. A numeração das tasks é global no projeto (não reinicia por épico).",
+    "inputs": {
+      "epic_path": "{{EPIC_PATH}}",
+      "docs_index": "docs/README.md",
+      "prd": "docs/02-PRD.md",
+      "sdd": "docs/03-SDD.md",
+      "tsd": "docs/04-TSD.md",
+      "tasks_output_directory": "tasks",
+      "done_directory": "tasks/done",
+      "references": "docs/referencias"
+    },
+    "formats": {
+      "task_body": "Como [{{PAPEL}}] DEVO [ação técnica] PARA [valor entregue]",
+      "epic_checklist_item": "- [ ] NNNN — descrição breve ([arquivo](../NNNN-titulo-em-kebab-case.md))",
+      "task_filename": "NNNN-titulo-em-kebab-case.md"
+    },
+    "task_sizing": {
+      "regra_geral": "Uma task toca um módulo ou uma tela e pode ser revisada num único diff.",
+      "exemplos_bons": [
+        "{{DEFINIR: exemplos de tasks bem dimensionadas neste projeto}}"
+      ],
+      "evitar": [
+        "Tasks que misturam camadas distintas no mesmo diff",
+        "Tasks genéricas do tipo 'criar tudo do módulo X'",
+        "Tasks sem teste associado"
+      ]
+    },
+    "clean_code_rule": {
+      "titulo": "Código limpo",
+      "regras": [
+        "{{DEFINIR: regras de qualidade de código do projeto}}",
+        "Sem código morto, sem gambiarra e sem estrutura reservada que nenhuma task use."
+      ]
+    }
+  },
+  "actions": [
+    "Pense passo a passo antes de criar qualquer task.",
+    "Usar os agentes mais pertinentes definidos em .claude/agents (ex.: tech-lead para decompor; qa para revisar se os critérios de aceite são testáveis).",
+    "Ler integralmente o épico em context.inputs.epic_path. Se o checklist já tiver tasks (não for '- [ ] a definir'), não duplicar: reportar e encerrar.",
+    "Ler as seções do TSD e SDD citadas no épico e, quando necessário, os FRs no PRD.",
+    "Antes de reutilizar um padrão dos documentos, verificar o código atual. Em conflito, a instrução atual do usuário tem precedência, depois o TSD, depois o SDD.",
+    "Determinar o próximo número de task: o maior NNNN existente em tasks_output_directory e done_directory, mais 1 (começar em 0001).",
+    "Identificar todas as tasks necessárias para cobrir o épico, seguindo context.task_sizing e ordenando por dependência.",
+    "Para cada task, criar um arquivo .md com: Título; Épico (link relativo); Agente responsável; Descrição no formato context.formats.task_body; Requisitos (IDs); Contexto Técnico; Critérios de Aceite; Testes esperados; Dependências; Referências; Notas de Implementação.",
+    "Aplicar context.clean_code_rule: nenhuma task cria compatibilidade com o que não existe nem estrutura sem consumidor.",
+    "Nomear os arquivos conforme context.formats.task_filename com a numeração global.",
+    "Atualizar o checklist do épico substituindo '- [ ] a definir' pelas tasks geradas, no formato context.formats.epic_checklist_item.",
+    "Não escrever código nem alterar docs/; lacunas vão para 'Pontos em aberto' do épico.",
+    "Retornar apenas: caminho do épico atualizado, faixa de numeração e contagem de tasks por agente (máximo 80 palavras)."
+  ]
+}
