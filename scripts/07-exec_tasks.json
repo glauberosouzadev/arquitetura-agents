@@ -4,7 +4,7 @@
   "description": "Implementa uma task de um épico de {{PROJECT_NAME}} seguindo o SDD e o TSD, cria testes, passa por code review, marca a task como concluída no épico e move o arquivo para tasks/done.",
   "context": {
     "objective": "Implementar de forma atômica e completa uma task, respeitando o SDD, o TSD e a stack definida, com testes cobrindo os critérios de aceite.",
-    "background": "A task é a unidade mínima de execução. Seguir estritamente os Critérios de Aceite e as Notas de Implementação do arquivo da task, sem escopo extra. Fluxo de orquestração definido em .claude/agents/README.md: entender → implementar → revisar → corrigir → testar → documentar e fechar.",
+    "background": "A task é a unidade mínima de execução. Seguir estritamente os Critérios de Aceite e as Notas de Implementação do arquivo da task, sem escopo extra. Fluxo definido em .claude/agents/README.md: entender → implementar (executor) → qa → code-reviewer → corrigir → reverificar → documentar e fechar. O orquestrador aciona os agentes diretamente.",
     "inputs": {
       "task_number": "{{TASK_NUMBER}}",
       "epic_path": "{{EPIC_PATH}}",
@@ -16,7 +16,8 @@
         "prd": "docs/02-PRD.md",
         "sdd": "docs/03-SDD.md",
         "tsd": "docs/04-TSD.md",
-        "references": "docs/referencias"
+        "references": "docs/referencias",
+        "adr": "docs/adr"
       },
       "dev_guidelines": [
         "{{DEFINIR: seções do TSD/SDD com stack, convenções e arquitetura}}"
@@ -28,6 +29,19 @@
         "{{DEFINIR: regras de qualidade de código do projeto}}",
         "Sem código morto, sem gambiarra e sem estrutura reservada que nenhuma task use."
       ]
+    },
+    "execution_rules": {
+      "pacote_de_contexto": "O executor recebe só: caminho da task, trechos normativos, restrições invioláveis, escopo, dependências entregues, ADRs citados e comandos do módulo (até ~2,5k tokens). Pode ler também o código dentro do escopo, os ADRs citados e fazer Grep em docs/ pelos IDs citados. Se faltar regra ou o código contradisser um trecho, devolve 'BLOQUEIO: <pergunta>' e para.",
+      "paralelismo": "Tasks só rodam em paralelo se não tiverem dependência entre si, 'Conflita com' vazio para as demais e arquivos-alvo disjuntos. Qualquer vínculo (mesmo arquivo, módulo ou recurso compartilhado) obriga execução sequencial, na ordem de dependência.",
+      "testes": {
+        "dev": "roda testes, lint e typecheck só do módulo afetado, uma vez, antes de devolver; não roda a suíte completa.",
+        "qa": "roda a suíte completa uma vez, depois que todas as tasks paralelas da onda terminarem; reaproveita evidência de fingerprint idêntico.",
+        "code_reviewer": "não executa testes; lê o diff e as evidências.",
+        "orquestrador": "nunca executa testes; confere o bloco Evidências.",
+        "saida": "modo silencioso: o log completo não entra no contexto; retornar só resultado e as falhas (nome e primeira linha, máx. 30 linhas).",
+        "evidencia": "bloco '## Evidências' no arquivo da task com: cmd, escopo (módulo|suíte), fingerprint (HEAD=<sha> diff=<sha256 de git diff HEAD nos arquivos do escopo>), resultado (pass|fail, contagens) e falhas."
+      },
+      "limites_de_retorno": "executor, qa e code-reviewer: até 120 palavras; code-reviewer lista bloqueantes primeiro."
     }
   },
   "dev_environment": {
@@ -39,26 +53,28 @@
     "build": "{{COMANDO}}",
     "rules": [
       "Antes de implementar, verificar se as dependências estão instaladas.",
-      "Rodar apenas testes, typecheck e lint do módulo afetado pela task.",
+      "Dev roda apenas testes, typecheck e lint do módulo afetado; a suíte completa é do qa (ver context.execution_rules.testes).",
+      "Rodar comandos em modo silencioso e retornar só falhas.",
       "Nunca instalar dependências globalmente nem alterar configuração de infraestrutura sem confirmação explícita do usuário.",
       "Git: {{DEFINIR: estratégia de branches}}. Commit e push só com pedido explícito do usuário."
     ]
   },
   "actions": [
     "Pense passo a passo antes de escrever qualquer código.",
-    "Localizar no épico a task de número context.inputs.task_number. Se já estiver '- [x]' ou em done_directory, reportar e encerrar.",
+    "Localizar no épico a linha da task de número context.inputs.task_number. Se já estiver '- [x]' ou em done_directory, reportar e encerrar.",
     "Ler integralmente o arquivo da task.",
-    "Verificar se as tasks listadas em Dependências estão concluídas. Se não, parar e reportar sem implementar.",
-    "Ler as seções do SDD, TSD e PRD citadas em Referências e os itens de dev_guidelines aplicáveis.",
+    "Verificar se as tasks listadas em Dependências estão concluídas. Se não, parar e reportar sem implementar. Ao executar várias tasks, aplicar context.execution_rules.paralelismo.",
+    "Ler docs/README.md e os ADRs listados na task. Não reler documentos inteiros: confirmar por Grep que cada 'doc§ID' citado em Trechos normativos não mudou. Se mudou, parar e reportar.",
     "Verificar as regras de dev_environment antes de implementar.",
-    "Implementar acionando o agente indicado em 'Agente responsável', passando contexto explícito: arquivo da task, seções relevantes e o que está dentro e fora do escopo.",
-    "Garantir testes que cubram os Critérios de Aceite conforme a estratégia de testes do TSD.",
-    "Rodar testes, typecheck e lint do módulo afetado e confirmar que tudo passa.",
-    "Acionar o agente code-reviewer sobre o diff (só depois da implementação pronta). Se houver apontamento bloqueante, voltar ao agente de desenvolvimento, corrigir e testar de novo.",
+    "Acionar diretamente o agente indicado em 'Agente responsável', passando apenas o pacote definido em context.execution_rules.pacote_de_contexto.",
+    "O executor implementa, garante testes que cubram os Critérios de Aceite conforme a estratégia de testes do TSD, roda a verificação do módulo uma vez e grava o bloco Evidências na task.",
+    "Quando todas as tasks da onda terminarem, acionar o qa uma vez para a suíte completa e os Critérios de Aceite. Se o fingerprint da evidência do dev for idêntico, o qa não reexecuta o escopo do módulo.",
+    "Só depois do QA, acionar o code-reviewer com o diff, as restrições invioláveis e os trechos normativos (sem logs). Se houver apontamento bloqueante, voltar ao executor, corrigir, e reverificar apenas o escopo alterado (novo fingerprint).",
+    "O orquestrador não executa testes: apenas confere o bloco Evidências e o fingerprint.",
     "Se a implementação divergir do TSD por motivo técnico válido, não alterar docs/ por conta própria: registrar a divergência no retorno para o usuário decidir.",
     "Marcar a task como concluída no épico ('- [ ]' → '- [x]') e ajustar o link para ../done/NNNN-....md.",
     "Mover o arquivo da task para context.inputs.done_directory.",
     "Se todas as tasks do épico estiverem '- [x]': mudar o Status do épico para 'Concluído em <AAAA-MM-DD>', mover o épico para tasks/epics/done/ e ajustar os links relativos.",
-    "Retornar apenas: número e nome da task, arquivos criados ou modificados, resultado de testes/typecheck/lint, apontamentos do code review e divergências do TSD (máximo 150 palavras)."
+    "Retornar apenas: número e nome da task, arquivos criados ou modificados, resultado de testes/typecheck/lint (do bloco Evidências), apontamentos do code review e divergências do TSD (máximo 150 palavras)."
   ]
 }

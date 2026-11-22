@@ -28,11 +28,10 @@ model: {{sonnet | opus | haiku | inherit}}
 - **Não faz:** {{o que está fora do escopo e deve ser delegado}}
 
 ## 3. Contexto e documentos que deve consultar
-- `docs/01-BRD.md` — {{quando consultar}}
-- `docs/02-PRD.md` — {{quando consultar}}
-- `docs/03-SDD.md` — {{quando consultar}}
-- `docs/04-TSD.md` — {{quando consultar}}
-- `docs/adr/` — decisões arquiteturais vigentes
+- Recebe o pacote de contexto do orquestrador (task, trechos normativos, restrições, escopo, comandos); ver `.claude/agents/README.md`.
+- Pode ler: {{o que este papel pode ler além do pacote; ex.: código do escopo, ADRs citados}}.
+- Documentos permitidos para este papel: {{liste só os necessários entre BRD, PRD, SDD, TSD; por padrão nenhum além do pacote}}.
+- Se faltar informação: devolver `BLOQUEIO: <pergunta>`; não adivinhar.
 
 ## 4. Ferramentas e skills disponíveis
 - {{skill ou ferramenta}} — {{para quê}}
@@ -40,13 +39,15 @@ model: {{sonnet | opus | haiku | inherit}}
 ## 5. Restrições e limites
 - Não inventar requisitos ou decisões arquiteturais.
 - Não alterar `docs/` sem aprovação; registrar divergências no retorno.
+- Testes: {{dev: só o módulo, uma vez | qa: suíte completa, uma vez por onda | code-reviewer: não executa}}.
+- Não ler nem atualizar a skill `napkin`.
 - {{outras restrições do papel}}
 
 ## 6. Critérios de qualidade
 - {{o que caracteriza uma entrega boa deste agente}}
 
 ## 7. Formato de entrega
-{{Estrutura esperada do retorno: o que listar, limite de palavras, evidências.}}
+{{Estrutura esperada do retorno, até 120 palavras. Executores: arquivos alterados, bloco Evidências gravado na task (cmd, escopo, fingerprint, resultado, falhas) e `BLOQUEIO` se houver. Nunca colar logs.}}
 
 ## 8. Quando pedir intervenção humana
 - {{situações em que deve parar e perguntar ao usuário}}

@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Este repositório segue o padrão **Project Engineering Base**: arquitetura multiagêntica com Spec-Driven Development. A explicação completa está em `docs/referencias/Arquitetura multiagentica.md`. Leia esse documento antes de criar agentes, documentos ou tasks.
+Este repositório segue o padrão **Project Engineering Base**: arquitetura multiagêntica com Spec-Driven Development. A explicação completa está em `docs/referencias/Arquitetura multiagentica.md`. Consulte a seção pertinente antes de agir: §3 agentes, §4 documentos, §5 planejamento, §6 execução.
 
 ## Estrutura obrigatória
 
@@ -15,6 +15,7 @@ Mantenha esta estrutura. Não mova pastas nem crie diretórios paralelos com a m
 │   ├── agents/                # um .md por agente; criar a partir de _TEMPLATE.md
 │   └── skills/                # capacidades reutilizáveis (uma pasta por skill, com SKILL.md)
 ├── docs/
+│   ├── README.md              # índice: convenção de IDs, seções globais, ADRs
 │   ├── 01-BRD.md              # negócio     (criado ao definir o projeto)
 │   ├── 02-PRD.md              # produto     (criado após o BRD)
 │   ├── 03-SDD.md              # sistema     (criado após o PRD)
@@ -47,6 +48,7 @@ Em conflito entre fontes, vale esta ordem: instrução atual do usuário → TSD
 - Não criar agentes, documentos, pastas ou processos sem necessidade identificável (doc de arquitetura, §11).
 - Não declarar concluída uma atividade sem evidência verificável (testes, typecheck, lint, review).
 - Commit e push só com pedido explícito do usuário.
+- Tasks em paralelo só se não houver dependência nem arquivo/recurso em comum; caso contrário, sequencial. Testes: dev roda só o módulo, `qa` roda a suíte uma vez, orquestrador e `code-reviewer` não rodam testes; só o bloco Evidências da task.
 - Orquestração: o orquestrador (sessão principal) aciona os agentes executores diretamente; PO, arquiteto e tech-lead só sob dúvida ou necessidade real. `token-optimizer` e `context-engineer` só a pedido do usuário, nunca durante uma task, sempre em par. Detalhes em `.claude/agents/README.md`.
 
 ## Projeto

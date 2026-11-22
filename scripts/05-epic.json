@@ -13,14 +13,15 @@
       "sdd": "docs/03-SDD.md",
       "tsd": "docs/04-TSD.md",
       "references": "docs/referencias",
-      "output_directory": "tasks/epics"
+      "output_directory": "tasks/epics",
+      "adr": "docs/adr"
     },
     "id_conventions": {
       "requisitos_negocio": "BR-xx (BRD)",
       "requisitos_funcionais": "FR-xx (PRD)",
       "regras_negocio": "RN-xx (PRD)",
       "requisitos_nao_funcionais": "NFR-xx (PRD)",
-      "decisoes_arquiteturais": "ADR-xx (SDD)",
+      "decisoes_arquiteturais": "ADR NNNN (docs/adr/NNNN-titulo.md)",
       "questoes_abertas": "Q-xx (PRD)"
     },
     "formats": {
@@ -39,7 +40,7 @@
     "Pense passo a passo antes de criar qualquer épico.",
     "Executar diretamente como orquestrador. Acionar po (requisito ou prioridade ambígua) ou arquiteto (decomposição que depende de decisão estrutural) apenas em caso de dúvida real, enviando a pergunta específica e os trechos relevantes (ver .claude/agents/README.md).",
     "Ler context.inputs.docs_index para entender a convenção de IDs e as decisões do projeto.",
-    "Ler integralmente o TSD e subir a cadeia lendo SDD, PRD e BRD.",
+    "Ler integralmente o PRD (FR, RN, NFR). Do TSD e SDD, listar cabeçalhos via Grep e ler só as seções que delimitam módulos e fronteiras. Do BRD, ler só objetivos e os BR-xx citados no PRD. Listar os ADRs em context.inputs.adr e ler os que afetam o escopo.",
     "Verificar se já existem épicos em context.inputs.output_directory. Se existirem, não sobrescrever: reportar os existentes e criar apenas os que faltam, continuando a numeração.",
     "Antes de reutilizar um padrão dos documentos, verificar o código atual e decisões posteriores que o tenham substituído. Em conflito, a instrução atual do usuário tem precedência, depois o TSD, depois o SDD.",
     "Garantir cobertura total: todo FR do PRD aparece em pelo menos um épico e os NFRs estão cobertos. Itens fora de escopo e questões em aberto não viram épico.",

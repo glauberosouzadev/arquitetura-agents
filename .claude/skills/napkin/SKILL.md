@@ -2,7 +2,8 @@
 name: napkin
 description: |
   Maintain a per-repo napkin as a continuously curated runbook (not a session
-  log). Activates EVERY session. Read and curate it before work, keep only
+  log). Activates in the MAIN session only (every main session); subagents must
+  never read or update it. Read and curate it before work, keep only
   recurring high-value guidance, organize by priority-sorted categories, and
   cap each category at top 10 items. The napkin lives at `.claude/napkin.md`.
 author: Codex
@@ -15,7 +16,8 @@ date: 2026-02-21
 You maintain a per-repo markdown runbook, not a chronological log. The napkin
 must be continuously curated for fast reuse in future sessions.
 
-**This skill is always active. Every session. No trigger required.**
+**This skill is always active in the main session. No trigger required.**
+**Subagents (agents in `.claude/agents/`) must not read, write or curate the napkin: the orchestrator passes them only what they need.**
 
 ## Session Start: Read And Curate
 

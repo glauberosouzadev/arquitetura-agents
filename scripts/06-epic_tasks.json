@@ -13,7 +13,8 @@
       "tsd": "docs/04-TSD.md",
       "tasks_output_directory": "tasks",
       "done_directory": "tasks/done",
-      "references": "docs/referencias"
+      "references": "docs/referencias",
+      "adr": "docs/adr"
     },
     "formats": {
       "task_body": "Como [{{PAPEL}}] DEVO [ação técnica] PARA [valor entregue]",
@@ -37,17 +38,23 @@
         "{{DEFINIR: regras de qualidade de código do projeto}}",
         "Sem código morto, sem gambiarra e sem estrutura reservada que nenhuma task use."
       ]
+    },
+    "task_context_package": {
+      "regra": "O 06 extrai UMA vez os trechos dos documentos e os grava na task; o 07 só valida. Assim o executor não precisa abrir docs/.",
+      "limite": "Campos de contexto da task somam até ~2,5k tokens (teto 4k). Restrições invioláveis nunca são cortadas para caber.",
+      "proibido": "Parafrasear regra de negócio, contrato de API ou schema: citar literalmente com a origem."
     }
   },
   "actions": [
     "Pense passo a passo antes de criar qualquer task.",
     "Decompor diretamente; acionar agentes de liderança (tech-lead, arquiteto, po) apenas em caso de dúvida real, e qa só se os critérios de aceite parecerem não testáveis (ver .claude/agents/README.md).",
     "Ler integralmente o épico em context.inputs.epic_path. Se o checklist já tiver tasks (não for '- [ ] a definir'), não duplicar: reportar e encerrar.",
-    "Ler as seções do TSD e SDD citadas no épico e, quando necessário, os FRs no PRD.",
+    "Ler as seções do TSD e SDD citadas no épico (localizar por Grep de cabeçalho/ID, sem ler o documento inteiro) e os FR/RN citados no PRD. Incluir sempre as seções marcadas como globais em docs/README.md (segurança, i18n etc.).",
     "Antes de reutilizar um padrão dos documentos, verificar o código atual. Em conflito, a instrução atual do usuário tem precedência, depois o TSD, depois o SDD.",
     "Determinar o próximo número de task: o maior NNNN existente em tasks_output_directory e done_directory, mais 1 (começar em 0001).",
     "Identificar todas as tasks necessárias para cobrir o épico, seguindo context.task_sizing e ordenando por dependência.",
-    "Para cada task, criar um arquivo .md com: Título; Épico (link relativo); Agente responsável; Descrição no formato context.formats.task_body; Requisitos (IDs); Contexto Técnico; Critérios de Aceite; Testes esperados; Dependências; Referências; Notas de Implementação.",
+    "Para cada task, criar um arquivo .md com: Título; Épico (link relativo); Agente responsável; Descrição no formato context.formats.task_body; Requisitos (IDs); Trechos normativos (citação literal com origem 'doc§ID'); Restrições invioláveis (lista curta); Escopo (módulo, arquivos-alvo, dentro e fora); Critérios de Aceite; Testes esperados; Comandos de verificação (só os do módulo afetado); Dependências (tasks que devem estar concluídas); Conflita com (tasks que tocam os mesmos arquivos ou recursos); Referências (IDs e ADRs); Notas de Implementação; Evidências (vazio; preenchido na execução).",
+    "Ordenar as tasks por dependência e declarar em 'Conflita com' toda task que altera o mesmo arquivo, módulo ou recurso compartilhado (banco, porta, configuração). O 07 só executa em paralelo tasks sem dependência nem conflito entre si.",
     "Aplicar context.clean_code_rule: nenhuma task cria compatibilidade com o que não existe nem estrutura sem consumidor.",
     "Nomear os arquivos conforme context.formats.task_filename com a numeração global.",
     "Atualizar o checklist do épico substituindo '- [ ] a definir' pelas tasks geradas, no formato context.formats.epic_checklist_item.",
