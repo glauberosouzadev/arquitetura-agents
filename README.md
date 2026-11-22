@@ -29,7 +29,7 @@ O `CLAUDE.md` é lido automaticamente pelo Claude Code em toda sessão e define 
 
 Este modelo é **intencionalmente um esqueleto**. Nada abaixo é criado de antemão, porque só faz sentido quando o conceito do projeto estiver definido:
 
-- **Agentes** (`.claude/agents/`): ao iniciar o projeto, escolha quantos e quais agentes terá (ex.: arquiteto, tech lead, PO, UX, dev, QA, code reviewer). Crie cada um a partir de `.claude/agents/_TEMPLATE.md`.
+- **Agentes** (`.claude/agents/`): ao iniciar o projeto, escolha quantos e quais agentes terá (ex.: arquiteto, tech lead, PO, UX, dev, QA, code reviewer, mais os auditores sob demanda token-optimizer e context-engineer). O orquestrador aciona os executores diretamente; liderança só sob dúvida (ver `.claude/agents/README.md`). Crie cada um a partir de `.claude/agents/_TEMPLATE.md`.
 - **ADRs** (`docs/adr/`): registre cada decisão arquitetural relevante quando ela for tomada.
 - **`.gitignore`**: criado ao iniciar o projeto, conforme a stack. Lembre de ignorar `.claude/settings.local.json`, `.env*` e `.playwright-cli/`.
 - **Documentos** (`docs/`): BRD, PRD, SDD e TSD são criados em ordem, conforme o projeto é definido.

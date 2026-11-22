@@ -37,6 +37,7 @@
   },
   "actions": [
     "Pense passo a passo antes de criar qualquer épico.",
+    "Executar diretamente como orquestrador. Acionar po (requisito ou prioridade ambígua) ou arquiteto (decomposição que depende de decisão estrutural) apenas em caso de dúvida real, enviando a pergunta específica e os trechos relevantes (ver .claude/agents/README.md).",
     "Ler context.inputs.docs_index para entender a convenção de IDs e as decisões do projeto.",
     "Ler integralmente o TSD e subir a cadeia lendo SDD, PRD e BRD.",
     "Verificar se já existem épicos em context.inputs.output_directory. Se existirem, não sobrescrever: reportar os existentes e criar apenas os que faltam, continuando a numeração.",

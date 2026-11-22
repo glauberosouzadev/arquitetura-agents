@@ -41,7 +41,7 @@
   },
   "actions": [
     "Pense passo a passo antes de criar qualquer task.",
-    "Usar os agentes mais pertinentes definidos em .claude/agents (ex.: tech-lead para decompor; qa para revisar se os critérios de aceite são testáveis).",
+    "Decompor diretamente; acionar agentes de liderança (tech-lead, arquiteto, po) apenas em caso de dúvida real, e qa só se os critérios de aceite parecerem não testáveis (ver .claude/agents/README.md).",
     "Ler integralmente o épico em context.inputs.epic_path. Se o checklist já tiver tasks (não for '- [ ] a definir'), não duplicar: reportar e encerrar.",
     "Ler as seções do TSD e SDD citadas no épico e, quando necessário, os FRs no PRD.",
     "Antes de reutilizar um padrão dos documentos, verificar o código atual. Em conflito, a instrução atual do usuário tem precedência, depois o TSD, depois o SDD.",

@@ -20,7 +20,7 @@ A arquitetura organiza o desenvolvimento em cinco camadas principais:
 │  │  01. GOVERNANÇA E ESPECIALIZAÇÃO                    │  │
 │  │                                                    │  │
 │  │  Agentes especializados                            │  │
-│  │  Arquiteto | Tech Lead | PO | UX | Dev | QA         │  │
+│  │  Liderança | Execução | Auditoria                  │  │
 │  └────────────────────────────────────────────────────┘  │
 │                           │                              │
 │                           ▼                              │
@@ -84,7 +84,9 @@ PROJECT/
 │   │   ├── dev-frontend.md
 │   │   ├── dev-mobile.md
 │   │   ├── qa.md
-│   │   └── code-reviewer.md
+│   │   ├── code-reviewer.md
+│   │   ├── token-optimizer.md
+│   │   └── context-engineer.md
 │   │
 │   ├── skills/
 │   │   ├── README.md
@@ -158,55 +160,51 @@ Distribuir responsabilidades entre agentes especializados, evitando concentraç�
 
 ### Organização funcional
 
+O orquestrador é a sessão principal e aciona diretamente os agentes executores. Os agentes de liderança são consultivos: só entram quando o orquestrador tem dúvida ou vê necessidade. Subagentes não acionam outros subagentes.
+
 ```text
-                    ORQUESTRADOR
-                         │
-          ┌──────────────┼──────────────┐
-          │              │              │
-          ▼              ▼              ▼
-       PRODUTO        ARQUITETURA     EXECUÇÃO
-          │              │              │
-          ▼              ▼              ▼
-          PO          ARQUITETO      TECH LEAD
-          │              │              │
-          ▼              ▼              │
-     REQUISITOS       DESIGN             │
-                         │              │
-                         └──────┬───────┘
-                                │
-               ┌────────────────┼───────────────┐
-               │                │               │
-               ▼                ▼               ▼
-          DEV BACKEND       DEV FRONTEND     DEV MOBILE
-               │                │               │
-               └────────────────┼───────────────┘
-                                │
-                                ▼
-                              QA
-                                │
-                                ▼
-                         CODE REVIEWER
-                                │
-                                ▼
-                         VALIDAÇÃO FINAL
+                         ORQUESTRADOR
+                              │
+       ┌──────────────────────┼───────────────────────┐
+       │ (só sob dúvida)      │ (fluxo padrão)        │ (só a pedido do usuário)
+       ▼                      ▼                       ▼
+   LIDERANÇA              EXECUÇÃO                AUDITORIA
+ PO · ARQUITETO     DEV BACKEND · DEV FRONTEND    TOKEN-OPTIMIZER
+    · TECH LEAD     · DEV MOBILE · UX DESIGNER    CONTEXT-ENGINEER
+                              │                   (sempre em par,
+                              ▼                    nunca em task)
+                             QA
+                              │
+                              ▼
+                        CODE REVIEWER
+                              │
+                              ▼
+                       VALIDAÇÃO FINAL
 ```
 
 ### Responsabilidades
 
+| Agente           | Grupo     | Responsabilidade                                  | Acionamento                             |
+| ---------------- | --------- | ------------------------------------------------- | --------------------------------------- |
+| Orquestrador     | —         | Coordenar o fluxo e delegar direto aos executores | Sessão principal                        |
+| PO               | Liderança | Requisitos, objetivos e regras de negócio         | Sob dúvida ou necessidade               |
+| Arquiteto        | Liderança | Arquitetura, padrões e decisões estruturais       | Sob dúvida ou necessidade               |
+| Tech Lead        | Liderança | Direcionamento técnico e integração               | Sob dúvida ou necessidade               |
+| UX Designer      | Execução  | Experiência e interface                           | Pelo orquestrador                       |
+| Dev Backend      | Execução  | Implementação backend                             | Pelo orquestrador                       |
+| Dev Frontend     | Execução  | Implementação frontend                            | Pelo orquestrador                       |
+| Dev Mobile       | Execução  | Implementação mobile                              | Pelo orquestrador                       |
+| QA               | Execução  | Testes e validação funcional                      | Pelo orquestrador                       |
+| Code Reviewer    | Execução  | Revisão de código e conformidade técnica          | Pelo orquestrador                       |
+| Token Optimizer  | Auditoria | Custo e densidade de tokens                       | Pedido do usuário, em par, fora de task |
+| Context Engineer | Auditoria | Estrutura da documentação e contratos de handoff  | Pedido do usuário, em par, fora de task |
 
-| Agente        | Responsabilidade                            |
-| ------------- | ------------------------------------------- |
-| Orquestrador  | Coordenar o fluxo e distribuir atividades   |
-| PO            | Requisitos, objetivos e regras de negócio   |
-| Arquiteto     | Arquitetura, padrões e decisões estruturais |
-| Tech Lead     | Direcionamento técnico e integração         |
-| UX Designer   | Experiência e interface                     |
-| Dev Backend   | Implementação backend                       |
-| Dev Frontend  | Implementação frontend                      |
-| Dev Mobile    | Implementação mobile                        |
-| QA            | Testes e validação funcional                |
-| Code Reviewer | Revisão de código e conformidade técnica    |
+### Regras de delegação
 
+- O orquestrador delega a task ao agente executor indicado, sem intermediário. Cada nível de delegação a mais duplica contexto e consome tokens.
+- A liderança não repassa trabalho a executores; responde à dúvida específica e a decisão resultante vira ADR.
+- Os auditores analisam o fluxo, não participam dele. O orquestrador faz a ponte entre os dois, pois subagentes não conversam diretamente.
+- Detalhes operacionais em `.claude/agents/README.md`.
 
 Os agentes devem ter instruções claras contendo:
 
@@ -393,6 +391,7 @@ Permitir que agentes executem atividades utilizando ferramentas e capacidades es
 ### Princípios
 
 - Cada atividade deve possuir escopo delimitado.
+- O orquestrador aciona o agente executor diretamente; liderança só sob dúvida.
 - O agente deve consultar a documentação pertinente.
 - O agente não deve inventar requisitos ou decisões arquiteturais.
 - Alterações relevantes devem ser documentadas.
@@ -554,7 +553,7 @@ A cada novo projeto, o orquestrador deve identificar:
 7. Quais decisões exigem aprovação humana?
 8. Quais critérios de qualidade devem ser aplicados?
 
-Não criar agentes, documentos, diretórios ou processos sem necessidade identificável.
+Não criar agentes, documentos, diretórios ou processos sem necessidade identificável. Agentes de liderança e de auditoria são sob demanda: não fazem parte do fluxo padrão de execução.
 
 A estrutura deve crescer conforme a complexidade do projeto, e não o contrário.
 

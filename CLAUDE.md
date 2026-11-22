@@ -47,6 +47,7 @@ Em conflito entre fontes, vale esta ordem: instrução atual do usuário → TSD
 - Não criar agentes, documentos, pastas ou processos sem necessidade identificável (doc de arquitetura, §11).
 - Não declarar concluída uma atividade sem evidência verificável (testes, typecheck, lint, review).
 - Commit e push só com pedido explícito do usuário.
+- Orquestração: o orquestrador (sessão principal) aciona os agentes executores diretamente; PO, arquiteto e tech-lead só sob dúvida ou necessidade real. `token-optimizer` e `context-engineer` só a pedido do usuário, nunca durante uma task, sempre em par. Detalhes em `.claude/agents/README.md`.
 
 ## Projeto
 
@@ -55,4 +56,4 @@ Em conflito entre fontes, vale esta ordem: instrução atual do usuário → TSD
 - **Nome:** {{PROJECT_NAME}}
 - **Stack:** {{DEFINIR}}
 - **Comandos:** instalar `{{COMANDO}}` · testar `{{COMANDO}}` · lint `{{COMANDO}}` · build `{{COMANDO}}`
-- **Agentes ativos:** {{DEFINIR: lista dos agentes criados em .claude/agents/}}
+- **Agentes ativos:** `token-optimizer`, `context-engineer` (auditoria sob demanda) · {{DEFINIR: demais agentes}}
