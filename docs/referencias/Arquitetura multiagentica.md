@@ -392,7 +392,7 @@ Permitir que agentes executem atividades utilizando ferramentas e capacidades es
 
 - Cada atividade deve possuir escopo delimitado.
 - O orquestrador aciona o agente executor diretamente; liderança só sob dúvida.
-- O executor recebe um pacote de contexto limitado (task, trechos normativos, restrições, escopo, comandos), montado no planejamento e validado pelo orquestrador; não relê `docs/` por inteiro.
+- O executor recebe um pacote de contexto em camadas (núcleo, normativo literal filtrado e anexos por referência), montado no planejamento e validado pelo orquestrador; cada agente recebe só o subconjunto de que precisa e não relê `docs/` por inteiro. Orçamento parametrizável por projeto (`context_budget`).
 - Tasks só rodam em paralelo se não tiverem dependência nem arquivos ou recursos em comum; senão, em sequência.
 - Testes têm dono por papel: dev roda o módulo, QA roda a suíte uma vez, orquestrador e reviewer não executam; a evidência fica registrada na task.
 - O agente deve consultar a documentação pertinente.

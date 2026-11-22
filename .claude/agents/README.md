@@ -40,9 +40,13 @@ Critério: custo de um erro × frequência de uso. Quem decide pouco e com alto 
 O planejamento (`06`) extrai os trechos dos documentos **uma vez** e os grava na task; a execução (`07`) só valida. O executor recebe:
 
 - caminho da task, requisitos (IDs), trechos normativos (citação literal com origem `doc§ID`, nunca paráfrase de regra, contrato ou schema), restrições invioláveis, escopo (dentro/fora, arquivos-alvo), dependências entregues, ADRs citados e comandos do módulo;
-- tamanho: até ~2,5k tokens (teto 4k). Restrições invioláveis nunca são cortadas para caber.
+- **camadas:** L0 núcleo (restrições invioláveis, escopo, critérios de aceite, comandos; ≤1,5k; vai a todos); L1 normativo literal filtrado pela camada da task (alvo 6k, teto 10k); L2 anexos volumosos por referência `doc§ID` + cabeçalho exato, lidos só por quem os produz.
+- **literal ou referência:** vai literal em L1 o que, se violado, passa silencioso (códigos de erro, autorização do papel tocado, decisões que divergem de outro documento), a interface consumida pela camada da task e os estados exigidos. Vai como L2 o conteúdo a transcrever (copy/i18n, DDL, tokens visuais, fixtures) e o que pertence a outra camada. Sem ID ou cabeçalho estável, o trecho vira literal.
+- **omissão declarada:** trecho que não se aplica vira `[omitido: motivo; doc§ID]`, nunca corte silencioso. Copiar tabelas sem espaço de alinhamento; medir tamanho sem ele.
+- **por destinatário:** cada bloco do L1 é marcado no planejamento com `[dev]`, `[qa]` e/ou `[review]`; o orquestrador monta o pacote por filtro mecânico, sem julgar relevância. `qa` recebe L0 + blocos `[qa]` (≤2,5k); `code-reviewer` recebe L0 + blocos `[review]` e o diff (≤3k). Nenhum dos dois recebe L2.
+- **restrições invioláveis** nunca são cortadas. Os valores acima são padrões iniciais, parametrizáveis em `context_budget` (`scripts/06-epic_tasks.json`); acima do teto, dividir a task ou justificar no campo Orçamento, e revisar os valores com medições reais do projeto.
 
-O executor pode ler além do pacote: o código dentro do escopo, os ADRs citados e `Grep` em `docs/` pelos IDs citados. Se faltar regra ou o código contradisser um trecho, devolve `BLOQUEIO: <pergunta>` e para. Antes de delegar, o orquestrador confirma por `Grep` que os trechos citados não mudaram.
+O executor pode ler além do pacote: o código dentro do escopo, os ADRs citados e `Grep` em `docs/` pelos IDs citados. O executor lê os anexos L2 marcados como obrigatórios e lista no retorno os que leu. Se faltar regra ou o código contradisser um trecho, devolve `BLOQUEIO: <pergunta>` e para. Antes de delegar, o orquestrador confirma por `Grep` que os trechos citados não mudaram.
 
 ## Paralelismo
 

@@ -41,8 +41,24 @@
     },
     "task_context_package": {
       "regra": "O 06 extrai UMA vez os trechos dos documentos e os grava na task; o 07 só valida. Assim o executor não precisa abrir docs/.",
-      "limite": "Campos de contexto da task somam até ~2,5k tokens (teto 4k). Restrições invioláveis nunca são cortadas para caber.",
-      "proibido": "Parafrasear regra de negócio, contrato de API ou schema: citar literalmente com a origem."
+      "limite": "Camadas: L0 núcleo (restrições invioláveis, escopo, critérios, comandos) ≤1,5k para todos; L1 normativo literal filtrado pela camada da task (alvo 6k, teto 10k; acima disso dividir a task ou justificar em Orçamento); L2 anexos por referência doc§ID. Restrições invioláveis nunca são cortadas.",
+      "proibido": "Parafrasear regra de negócio, contrato de API ou schema: citar literalmente com a origem.",
+      "literal_ou_referencia": "Literal (L1): regra que passa silenciosa se violada, interface consumida pela camada da task, estados exigidos. Referência (L2): conteúdo a transcrever (copy/i18n, DDL, tokens visuais, fixtures) e o que é de outra camada. Sem ID/cabeçalho estável: literal. Trecho que não se aplica: '[omitido: motivo; doc§ID]'. Tabelas sem espaço de alinhamento.",
+      "marcas_por_destinatario": "Cada bloco de L1 recebe marcas [dev], [qa], [review]. O 07 monta o pacote de cada agente por filtro dessas marcas."
+    },
+    "context_budget": {
+      "descricao": "Valores iniciais em tokens (estimados, ~4 chars/token, sem espaço de alinhamento). Cada projeto sobrescreve com medições reais.",
+      "l0_nucleo": 1500,
+      "l1_alvo": 6000,
+      "l1_teto": 10000,
+      "qa_max": 2500,
+      "reviewer_max": 3000,
+      "blocos": {
+        "{{DEFINIR}}": {
+          "modo": "literal|referencia",
+          "max": 0
+        }
+      }
     }
   },
   "actions": [
@@ -53,7 +69,8 @@
     "Antes de reutilizar um padrão dos documentos, verificar o código atual. Em conflito, a instrução atual do usuário tem precedência, depois o TSD, depois o SDD.",
     "Determinar o próximo número de task: o maior NNNN existente em tasks_output_directory e done_directory, mais 1 (começar em 0001).",
     "Identificar todas as tasks necessárias para cobrir o épico, seguindo context.task_sizing e ordenando por dependência.",
-    "Para cada task, criar um arquivo .md com: Título; Épico (link relativo); Agente responsável; Descrição no formato context.formats.task_body; Requisitos (IDs); Trechos normativos (citação literal com origem 'doc§ID'); Restrições invioláveis (lista curta); Escopo (módulo, arquivos-alvo, dentro e fora); Critérios de Aceite; Testes esperados; Comandos de verificação (só os do módulo afetado); Dependências (tasks que devem estar concluídas); Conflita com (tasks que tocam os mesmos arquivos ou recursos); Complexidade (padrão | alta: concorrência, segurança, migração de dados ou refatoração entre módulos); Referências (IDs e ADRs); Notas de Implementação; Evidências (vazio; preenchido na execução).",
+    "Para cada task, criar um arquivo .md com: Título; Épico (link relativo); Agente responsável; Descrição no formato context.formats.task_body; Requisitos (IDs); Trechos normativos (L1: citação literal com origem 'doc§ID', cada bloco marcado [dev]/[qa]/[review]; trecho inaplicável vira '[omitido: motivo; doc§ID]'); Restrições invioláveis (lista curta, uma linha por regra com o ponteiro); Escopo (módulo, arquivos-alvo, dentro e fora); Anexos (L2: doc§ID + cabeçalho exato, obrigatório|opcional); Critérios de Aceite (cada um aponta para um item do núcleo ou para um anexo obrigatório); Testes esperados; Comandos de verificação (só os do módulo afetado); Dependências (tasks que devem estar concluídas); Conflita com (tasks que tocam os mesmos arquivos ou recursos); Complexidade (padrão | alta: concorrência, segurança, migração de dados ou refatoração entre módulos); Referências (IDs e ADRs); Notas de Implementação; Orçamento (tamanho do L0+L1 e justificativa se acima do alvo); Evidências (vazio; preenchido na execução).",
+    "Aplicar context.context_budget e context.task_context_package: medir L0+L1 sem espaço de alinhamento; se L1 passar do teto, dividir a task ou justificar em Orçamento. Nunca cortar restrição inviolável para caber.",
     "Ordenar as tasks por dependência e declarar em 'Conflita com' toda task que altera o mesmo arquivo, módulo ou recurso compartilhado (banco, porta, configuração). O 07 só executa em paralelo tasks sem dependência nem conflito entre si.",
     "Aplicar context.clean_code_rule: nenhuma task cria compatibilidade com o que não existe nem estrutura sem consumidor.",
     "Nomear os arquivos conforme context.formats.task_filename com a numeração global.",
