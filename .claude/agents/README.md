@@ -18,6 +18,23 @@ O **orquestrador** é a sessão principal do Claude Code (não é um arquivo em 
 4. **Retornos curtos:** executor, `qa` e `code-reviewer` devolvem até 120 palavras; reviewer lista bloqueantes primeiro. Logs nunca entram no retorno.
 5. **Skill `napkin`:** só na sessão principal; subagentes não a leem nem a atualizam.
 
+## Perfil de modelo
+
+Critério: custo de um erro × frequência de uso. Quem decide pouco e com alto impacto usa o modelo mais forte; quem roda muito sobre especificação pronta usa o intermediário. Todo agente declara `model` no frontmatter; nunca `inherit`.
+
+| Agente | model | Motivo |
+|---|---|---|
+| `po`, `arquiteto`, `tech-lead` | opus | Raros (só sob dúvida); erro contamina todas as tasks seguintes. |
+| `code-reviewer` | opus | Roda em toda task, mas recebe só diff e restrições; evita os mesmos pontos cegos do dev. |
+| `dev-*` | sonnet | A task chega com trechos, escopo e critérios prontos: é execução. |
+| `qa` | sonnet | Testes contra critérios explícitos. Não usar haiku: teste frouxo dá falsa confiança. |
+| `ux-designer` | sonnet | Sem decisão estrutural. |
+| `context-engineer`, `token-optimizer` | opus | Raros, a pedido do usuário; achar contradições e padrões exige raciocínio forte. |
+
+`haiku` só para tarefa puramente mecânica; hoje nenhum agente o usa.
+
+**Escalada de dev:** se a task tiver `Complexidade: alta` (concorrência, segurança, migração de dados, refatoração entre módulos), o orquestrador aciona o dev com `model: opus` por override. Padrão: sonnet.
+
 ## Pacote de contexto (orquestrador → executor)
 
 O planejamento (`06`) extrai os trechos dos documentos **uma vez** e os grava na task; a execução (`07`) só valida. O executor recebe:

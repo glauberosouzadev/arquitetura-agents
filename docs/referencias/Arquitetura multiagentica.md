@@ -204,7 +204,7 @@ O orquestrador é a sessão principal e aciona diretamente os agentes executores
 - O orquestrador delega a task ao agente executor indicado, sem intermediário. Cada nível de delegação a mais duplica contexto e consome tokens.
 - A liderança não repassa trabalho a executores; responde à dúvida específica e a decisão resultante vira ADR.
 - Os auditores analisam o fluxo, não participam dele. O orquestrador faz a ponte entre os dois, pois subagentes não conversam diretamente.
-- Detalhes operacionais em `.claude/agents/README.md`.
+- Cada agente declara seu modelo (liderança e code reviewer em opus; devs, QA e UX em sonnet), com escalada de dev para opus em task de complexidade alta. Perfil completo em `.claude/agents/README.md`.
 
 Os agentes devem ter instruções claras contendo:
 

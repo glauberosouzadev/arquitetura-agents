@@ -5,6 +5,7 @@ Este arquivo é um **modelo**, não um agente. Para criar um agente:
 1. Copie este arquivo para `.claude/agents/<nome-do-agente>.md` (ex.: `tech-lead.md`).
 2. Substitua todo o conteúdo do novo arquivo pelo bloco abaixo (sem as crases do bloco de código).
 3. Preencha os marcadores `{{...}}` e remova as seções que não se aplicarem.
+4. Defina `model` explicitamente conforme a tabela "Perfil de modelo" de `.claude/agents/README.md`. Nunca use `inherit`: o agente herdaria o modelo da sessão principal.
 
 > Este template não começa com frontmatter de propósito: assim o Claude Code não o carrega como um agente de verdade.
 
@@ -15,7 +16,7 @@ Este arquivo é um **modelo**, não um agente. Para criar um agente:
 name: {{nome-em-kebab-case}}
 description: {{Quando usar este agente. Seja específico: o orquestrador decide acioná-lo por esta frase.}}
 tools: {{Lista de ferramentas permitidas, ex.: Read, Grep, Glob, Edit, Write, Bash, Agent. Omita para herdar todas.}}
-model: {{sonnet | opus | haiku | inherit}}
+model: {{sonnet | opus | haiku}}
 ---
 
 # {{Nome do agente}}
