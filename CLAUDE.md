@@ -34,6 +34,8 @@ Mantenha esta estrutura. Não mova pastas nem crie diretórios paralelos com a m
 
 ## Fluxo de trabalho
 
+Passo a passo de início de projeto (agentes, documentos, ajuste dos scripts): `docs/referencias/GUIA-DE-INICIO.md`.
+
 1. **Especificação:** BRD → PRD → SDD → TSD, nesta ordem. Um documento só é criado quando o anterior existe.
 2. **Planejamento:** rodar `scripts/05-epic.json` para gerar os épicos, depois `scripts/06-epic_tasks.json` para cada épico.
 3. **Execução:** rodar `scripts/07-exec_tasks.json` para cada task. Ao concluir, a task vai para `tasks/done/` e, quando todas terminam, o épico vai para `tasks/epics/done/`.

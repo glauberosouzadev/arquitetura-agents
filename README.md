@@ -49,6 +49,8 @@ Eles trazem marcadores `{{...}}` (ex.: `{{PROJECT_NAME}}`, `{{DEFINIR: ...}}`) q
 
 ## Como usar em um novo projeto
 
+O passo a passo completo, com gates por fase, está em [`docs/referencias/GUIA-DE-INICIO.md`](docs/referencias/GUIA-DE-INICIO.md). Resumo:
+
 1. Copie este repositório (ou use como template) para o novo projeto.
 2. Defina o conceito e crie `docs/01-BRD.md` a `docs/04-TSD.md`.
 3. Escolha e crie os agentes em `.claude/agents/` a partir do `_TEMPLATE.md`.
